@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, manyToMany, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
 
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
-import Comment from '#models/comment'
-export default class Post extends BaseModel {
+import Post from '#models/post'
+export default class Comment extends BaseModel {
   @column({ isPrimary: true })
   declare id: string
 
@@ -18,7 +18,10 @@ export default class Post extends BaseModel {
   declare publishedAt: DateTime
 
   @column()
-  declare authorId: string
+  declare authorId: number
+
+  @column()
+  declare postId: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -26,11 +29,9 @@ export default class Post extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @belongsTo(() => User, {
-    foreignKey: 'authorId',
-  })
-  declare users: BelongsTo<typeof User>
+  @belongsTo(() => Post)
+  declare post_id: BelongsTo<typeof Post>
 
-  @hasMany(() => Comment)
-  declare comment_id: HasMany<typeof Comment>
+  @belongsTo(() => User)
+  declare author_id: BelongsTo<typeof User>
 }

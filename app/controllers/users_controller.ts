@@ -1,6 +1,7 @@
 import User from '#models/user'
 import { HttpContext } from '@adonisjs/core/http'
 import { UserRegisterDTO, UserUpdateDTO } from '../DTO/user.js'
+import { randomUUID } from 'node:crypto'
 
 export default class UsersController {
   async index() {
@@ -27,21 +28,23 @@ export default class UsersController {
     ])
 
     try {
-      const userExists = await User.findBy('email', data.email)
+      const emailUserExists = await User.findBy('email', data.email)
 
-      if (userExists) {
+      if (emailUserExists) {
         return { message: 'User already exists' }
+      }
+      const idUser = randomUUID()
+      await User.create({ id: idUser, ...data })
+
+      const user = await User.findBy('id', idUser)
+      return {
+        user,
       }
     } catch (error) {
       return {
         message: 'Error',
         error,
       }
-    }
-
-    await User.create(data)
-    return {
-      message: 'Success',
     }
   }
   async show({ params }: HttpContext) {
@@ -86,6 +89,7 @@ export default class UsersController {
       }
 
       await userExists.merge(data).save()
+      return { message: 'Success' }
     } catch (error) {
       return {
         message: error,

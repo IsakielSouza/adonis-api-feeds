@@ -1,12 +1,20 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, beforeSave, column, hasMany } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeSave,
+  column,
+  hasMany,
+  hasManyThrough,
+  manyToMany,
+} from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasManyThrough, ManyToMany } from '@adonisjs/lucid/types/relations'
 
 import Post from '#models/post'
+import Comment from './comment.js'
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
   passwordColumnName: 'password',
@@ -14,7 +22,7 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 
 export default class User extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: string
 
   @column()
   declare firstName: string | null
@@ -35,7 +43,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare email: string
 
   @column()
-  declare password: string
+  private declare password: string
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -51,15 +59,23 @@ export default class User extends compose(BaseModel, AuthFinder) {
   }
 
   static accessTokens = DbAccessTokensProvider.forModel(User, {
-    expiresIn: '30 days',
-    prefix: 'oat_',
+    expiresIn: '3 days',
     table: 'auth_access_tokens',
     type: 'auth_token',
     tokenSecretLength: 40,
   })
 
-  @hasMany(() => Post, {
-    foreignKey: 'user_id',
+  @manyToMany(() => Post, {
+    pivotTable: 'author_id',
   })
-  declare posts: HasMany<typeof Post>
+  declare posts: ManyToMany<typeof Post>
+
+  @hasMany(() => Comment, {
+    foreignKey: 'comment_id',
+  })
+  declare comments: HasMany<typeof Comment>
+
+  static get hidden() {
+    return ['password']
+  }
 }

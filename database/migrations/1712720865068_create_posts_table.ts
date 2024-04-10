@@ -5,10 +5,17 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
+      table.uuid('id').primary().notNullable().unique()
+      table
+        .uuid('author_id')
+        .notNullable()
+        .unsigned()
+        .references('id')
+        .inTable('users')
+        .onDelete('CASCADE')
       table.string('title').notNullable()
-      table.string('body').notNullable()
-      table.integer('user_id').unsigned().references('users.id').onDelete('CASCADE') // delete post when user is deleted
+      table.string('description', 500).notNullable()
+      table.timestamp('published_at')
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

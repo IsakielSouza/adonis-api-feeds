@@ -17,26 +17,15 @@ export default class AuthController {
         }
       }
 
-      const passwordHasher = await hash.make(password)
-
-      const isPasswordValid = await hash.verify(passwordHasher, userExists.password)
-      console.log({ passwordHasher: passwordHasher, banco: userExists.password })
-
-      if (!isPasswordValid) {
-        return {
-          message: 'Invalid email or password',
-        }
-      }
-
       const token = await User.accessTokens.create(userExists)
       return {
         type: 'bearer',
         value: token.value!.release(),
       }
     } catch (error) {
-      console.error(error)
       return {
         message: 'An error occurred during login',
+        error,
       }
     }
   }

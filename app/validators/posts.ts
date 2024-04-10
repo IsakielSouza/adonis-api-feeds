@@ -1,9 +1,23 @@
 import vine from '@vinejs/vine'
 
+/**
+ * Validates the post's creation action
+ */
 export const createPostValidator = vine.compile(
   vine.object({
-    title: vine.string().trim().minLength(4).maxLength(40),
-    content: vine.string().trim().minLength(4).maxLength(500),
-    author: vine.string().trim().minLength(4).maxLength(40),
+    title: vine.string().trim().minLength(6),
+    description: vine.string().trim().escape().maxLength(500),
+    authorId: vine.string(),
+    // slug: vine.string().trim(),
+  })
+)
+
+/**
+ * Validates the post's update action
+ */
+export const updatePostValidator = vine.compile(
+  vine.object({
+    title: vine.string().trim().minLength(6),
+    description: vine.string().trim().escape(),
   })
 )
