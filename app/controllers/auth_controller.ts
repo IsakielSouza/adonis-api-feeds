@@ -13,7 +13,7 @@ export default class AuthController {
       const userExists = await User.findBy('email', email)
       if (!userExists) {
         return {
-          message: 'User not found',
+          message: 'Error Login: User not found',
         }
       }
 

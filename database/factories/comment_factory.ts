@@ -1,14 +1,13 @@
 import factory from '@adonisjs/lucid/factories'
-import Post from '#models/post'
+import Comments from '#models/comment'
 
 export const CommentFactory = factory
-  .define(Post, async ({ faker }) => {
+  .define(Comments, async ({ faker }) => {
     return {
       id: faker.string.uuid(),
-      // author_id: 'b01c036b-4075-4db3-bca5-333502750f07',
-      // post_id: faker.string.uuid(),
-      title: faker.lorem.sentence(),
-      description: faker.lorem.paragraph(),
+      content: faker.lorem.paragraph({ min: 1, max: 150 }),
+      author_id: faker.string.uuid(),
+      post_id: faker.string.uuid(),
     }
   })
   .build()

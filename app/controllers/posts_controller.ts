@@ -7,7 +7,8 @@ import { randomUUID } from 'node:crypto'
 
 export default class PostsController {
   async index() {
-    return Post.query().orderBy('createdAt', 'desc')
+    const posts = await Post.query().orderBy('publishedAt', 'desc')
+    return { posts }
   }
 
   async store({ request }: HttpContext) {
@@ -21,7 +22,6 @@ export default class PostsController {
       }
 
       const idPost = randomUUID()
-
       return Post.create({ id: idPost, ...data })
     } catch (error) {
       return {
@@ -34,7 +34,7 @@ export default class PostsController {
     const user = await User.find(params.id)
 
     if (!user) {
-      return { message: 'User not found' }
+      return { message: 'User could not find this post' }
     }
 
     const posts = await user.related('posts').query().paginate(1)
@@ -45,7 +45,7 @@ export default class PostsController {
     try {
       const user = await User.find(params.id)
       if (!user) {
-        return { message: 'User not found' }
+        return { message: 'Error Post: User not found' }
       }
 
       const posts = await db.rawQuery(
@@ -53,7 +53,8 @@ export default class PostsController {
         p.description, p.published_at
         FROM posts p
         INNER JOIN users u ON p.author_id = u.id
-        WHERE p.author_id = '${params.id}'`
+        WHERE p.author_id = '${params.id}'
+        ORDER BY p.published_at DESC`
       )
       // const posts = await Post.query()
       //   .innerJoin('users as u', 'p.author_id', '=', 'u.id')

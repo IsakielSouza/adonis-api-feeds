@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, manyToMany, belongsTo } from '@adonisjs/lucid/orm'
-import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 import User from '#models/user'
 import Post from '#models/post'
@@ -12,16 +12,16 @@ export default class Comment extends BaseModel {
   declare title: string
 
   @column()
-  declare description: string
+  declare content: string
 
   @column.dateTime({ autoCreate: true })
   declare publishedAt: DateTime
 
   @column()
-  declare authorId: number
+  declare authorId: string
 
   @column()
-  declare postId: number
+  declare postId: string
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

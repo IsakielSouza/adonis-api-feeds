@@ -55,7 +55,7 @@ export default class UsersController {
       if (!userExists) {
         return { message: 'User not found' }
       }
-      return userExists
+      return { userExists }
     } catch (error) {
       if (error.code === 'E_ROW_NOT_FOUND') {
         return { message: 'User not found' }
