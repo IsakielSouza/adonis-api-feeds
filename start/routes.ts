@@ -2,6 +2,7 @@ const PostsController = () => import('#controllers/posts_controller')
 const UsersController = () => import('#controllers/users_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const CommentsController = () => import('#controllers/comments_controller')
+const FeedController = () => import('#controllers/feed_controller')
 import User from '#models/user'
 
 import router from '@adonisjs/core/services/router'
@@ -17,6 +18,8 @@ router.post('user/:id/tokens', async ({ params }) => {
 })
 
 router.post('/login', [AuthController, 'login'])
+
+router.get('feed', [FeedController, 'index'])
 
 router.get('users', [UsersController, 'index'])
 router.post('user', [UsersController, 'store'])
